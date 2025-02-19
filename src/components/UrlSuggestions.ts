@@ -1,4 +1,5 @@
-import { AutoLayout, Text } from '@figma/widget-typings';
+const { widget } = figma;
+const { AutoLayout, Text } = widget;
 import { useTheme } from '../utils/theme';
 
 interface UrlSuggestionsProps {
@@ -22,8 +23,8 @@ export const UrlSuggestions = ({ onSelect }: UrlSuggestionsProps): AutoLayout =>
     cornerRadius: 4,
     width: 'fill-parent',
     children: [
-      new Text({
-        text: "Suggested formats:",
+      figma.widget.h(Text, {
+        characters: "Suggested formats:",
         fontSize: 10,
         fill: theme.text.secondary
       }),
@@ -37,8 +38,8 @@ export const UrlSuggestions = ({ onSelect }: UrlSuggestionsProps): AutoLayout =>
             hoverStyle: { fill: theme.surfaceHover },
             onClick: () => onSelect(suggestion.url),
             children: [
-              new Text({
-                text: suggestion.label,
+              figma.widget.h(Text, {
+                characters: suggestion.label,
                 fontSize: 10,
                 fill: theme.text.secondary
               })

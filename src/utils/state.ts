@@ -1,4 +1,15 @@
-import { HapticSpec, HapticSpecV1, HapticSpecV2, VersionedState } from '../types';
+import type { 
+  HapticSpec, 
+  HapticSpecV1, 
+  HapticSpecV2, 
+  VersionedState,
+  Note,
+  PrototypeLink,
+  TriggerType,
+  HapticType
+} from '../types';
+
+import { defaultState } from '../constants';
 
 const CURRENT_VERSION = 2;
 
@@ -20,20 +31,23 @@ function migrateV1ToV2(v1: HapticSpecV1): HapticSpecV2 {
 
 export function migrateState(savedState: string): HapticSpec {
   try {
-    const parsed = JSON.parse(savedState) as VersionedState<any>;
+    const parsed = JSON.parse(savedState);
     
     if (!parsed.version) {
-      const v1Data = parsed as HapticSpecV1;
+      // Convert to v1 first
+      const v1Data = parsed as unknown as HapticSpecV1;
       return migrateV1ToV2(v1Data);
     }
 
-    switch (parsed.version) {
+    const versionedState = parsed as VersionedState<HapticSpecV1 | HapticSpecV2>;
+    
+    switch (versionedState.version) {
       case 1:
-        return migrateV1ToV2(parsed.data);
+        return migrateV1ToV2(versionedState.data as HapticSpecV1);
       case 2:
-        return parsed.data;
+        return versionedState.data as HapticSpecV2;
       default:
-        console.warn(`Unknown version ${parsed.version}, using current version`);
+        console.warn(`Unknown version ${versionedState.version}, using current version`);
         return defaultState;
     }
   } catch (error) {
@@ -42,35 +56,10 @@ export function migrateState(savedState: string): HapticSpec {
   }
 }
 
-export function usePersistentState<T>(id: string, initialState: T): [T, (value: T) => void] {
+export function usePersistentState<T extends HapticSpec>(
+  id: string, 
+  initialState: T
+): [T, (value: T) => void] {
   const storageKey = `haptic-widget-${id}`;
-  
-  const loadState = (): T => {
-    try {
-      const savedState = figma.root.getPluginData(storageKey);
-      if (!savedState) return initialState;
-      
-      return migrateState(savedState) as T;
-    } catch {
-      return initialState;
-    }
-  };
-
-  const [state, setState] = figma.widget.useSyncedState<T>(storageKey, loadState());
-
-  const setPersistedState = (value: T) => {
-    const versionedState: VersionedState<T> = {
-      version: CURRENT_VERSION,
-      data: value
-    };
-    
-    setState(value);
-    try {
-      figma.root.setPluginData(storageKey, JSON.stringify(versionedState));
-    } catch (error) {
-      console.error('Failed to persist state:', error);
-    }
-  };
-
-  return [state, setPersistedState];
+  return figma.widget.useSyncedState<T>(storageKey, initialState);
 } 

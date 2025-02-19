@@ -1,4 +1,5 @@
-import { AutoLayout, Input, Text } from '@figma/widget-typings';
+const { widget } = figma;
+const { AutoLayout, Input, Text } = widget;
 import { useTheme } from '../utils/theme';
 import { CardHeader } from './CardHeader';
 import { PrototypeLink } from '../types';
@@ -17,6 +18,11 @@ interface PrototypeLinkCardProps {
 
 interface InputEvent {
   characters: string;
+}
+
+interface ClickEvent {
+  type: 'CLICK';
+  point: { x: number; y: number };
 }
 
 export const PrototypeLinkCard = ({ 
@@ -93,8 +99,8 @@ export const PrototypeLinkCard = ({
                 fill: '#EEEEFF',
                 cornerRadius: 4,
                 children: [
-                  new Text({
-                    text: getUrlType(link.url),
+                  figma.widget.h(Text, {
+                    characters: getUrlType(link.url),
                     fontSize: 10,
                     fill: theme.text.secondary
                   })
@@ -114,8 +120,8 @@ export const PrototypeLinkCard = ({
                   }
                 },
                 children: [
-                  new Text({
-                    text: "Open",
+                  figma.widget.h(Text, {
+                    characters: "Open",
                     fontSize: 12,
                     fill: isValidUrl(link.url) ? '#000000' : theme.text.disabled
                   })

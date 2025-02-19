@@ -4,7 +4,7 @@
   "description": "A Figma widget for iOS haptic feedback",
   "main": "dist/code.js",
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "tsc -p tsconfig.json && cp src/ui.html dist/",
     "watch": "tsc -p tsconfig.json --watch",
     "dev": "npm run watch",
     "typecheck": "tsc --noEmit"

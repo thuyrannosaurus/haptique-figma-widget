@@ -1,7 +1,9 @@
-import { AutoLayout, Input } from '@figma/widget-typings';
+const { widget } = figma;
+const { AutoLayout, Input } = widget;
 import { useTheme } from '../utils/theme';
 import { CardHeader } from './CardHeader';
 import { Note } from '../types';
+import type { InputEvent } from '../types';
 
 interface NoteCardProps {
   note: Note;
@@ -53,7 +55,7 @@ export const NoteCard = ({
       new Input({
         placeholder: "Add your note here...",
         value: note.content,
-        onTextEditEnd: (e) => {
+        onTextEditEnd: (e: InputEvent) => {
           onUpdate(note.id, { content: e.characters });
         },
         fontSize: 12,

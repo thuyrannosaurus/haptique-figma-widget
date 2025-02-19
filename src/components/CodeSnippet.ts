@@ -1,4 +1,5 @@
-import { AutoLayout, Text } from '@figma/widget-typings';
+const { widget } = figma;
+const { AutoLayout, Text } = widget;
 import { useTheme } from '../utils/theme';
 import { highlightCode } from '../utils/syntax';
 import { COPY_HTML } from '../constants';
@@ -35,8 +36,8 @@ export const CodeSnippet = ({ code, title }: CodeSnippetProps): AutoLayout => {
         spacing: 8,
         verticalAlignItems: 'center',
         children: [
-          new Text({
-            text: title,
+          figma.widget.h(Text, {
+            characters: title,
             fontSize: 14,
             fill: theme.text.primary,
             fontWeight: 600
@@ -65,8 +66,8 @@ export const CodeSnippet = ({ code, title }: CodeSnippetProps): AutoLayout => {
               };
             },
             children: [
-              new Text({
-                text: "Copy",
+              figma.widget.h(Text, {
+                characters: "Copy",
                 fontSize: 12,
                 fill: theme.text.primary
               })
@@ -83,8 +84,8 @@ export const CodeSnippet = ({ code, title }: CodeSnippetProps): AutoLayout => {
         stroke: theme.border,
         cornerRadius: 4,
         children: highlightedCode.map(part => 
-          new Text({
-            text: part.text,
+          figma.widget.h(Text, {
+            characters: part.text,
             fontSize: 12,
             fontFamily: 'Source Code Pro',
             fill: part.fill,
